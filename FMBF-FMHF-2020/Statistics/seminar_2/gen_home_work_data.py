@@ -1,4 +1,7 @@
+from functools import partial
 from itertools import chain
+from os import mkdir
+from os.path import isdir, join as join_path
 from typing import Union
 
 import numpy as np
@@ -6,6 +9,12 @@ import numpy.random as rnd
 import pandas as pd
 
 rnd.seed(999)
+
+DATA_DIR = 'homework_data/'
+if not isdir(DATA_DIR):
+    mkdir(DATA_DIR)
+
+to_data_dir = partial(join_path, DATA_DIR)
 
 N_HEALTHY = 327
 N_ILL = 48
@@ -57,7 +66,7 @@ ill_df = pd.DataFrame(
         )
     ),
     columns=colnames,
-    index=patient_ID_range[patient_ID_range == 'Ill'].index
+    index=patient_ID_range.index[patient_ID_range == 'Ill']
 )
 
 
@@ -76,8 +85,8 @@ ill_df += rnd.normal(NOISE_mu, NOISE_sigma, size=ill_df.shape)
 healthy_df = pd.DataFrame(
     rnd.normal(NOISE_mu, NOISE_sigma, size=(N_HEALTHY, len(colnames))),
     columns=colnames,
-    index=patient_ID_range[patient_ID_range == 'Healthy'].index
+    index=patient_ID_range.index[patient_ID_range == 'Healthy']
 )
 
-pd.concat((healthy_df, ill_df)).sort_index().to_csv('fluo.tsv', sep='\t')
-patient_ID_range.to_csv('patient_status.csv')
+pd.concat((healthy_df, ill_df)).sort_index().to_csv(to_data_dir('fluo_data.tsv'), sep='\t')
+patient_ID_range.to_csv(to_data_dir('patient_status.csv'))
