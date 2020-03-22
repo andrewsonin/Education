@@ -55,7 +55,7 @@ patient_ID_range = pd.Series(
 )
 
 colnames = tuple(
-    map(lambda ag_type: f'{ag_type} Ab fluo Intensity', chain.from_iterable(antigen_types))
+    map(lambda ag_type: f'{ag_type} Ab', chain.from_iterable(antigen_types))
 )
 
 ill_df = pd.DataFrame(
@@ -77,8 +77,8 @@ def squeeze_column(df: pd.DataFrame, col: str, factor: Union[int, float]) -> typ
 H2_SCALING_FACTOR = .85
 N4_SCALING_FACTOR = .75
 
-squeeze_column(ill_df, 'H2 Ab fluo Intensity', H2_SCALING_FACTOR)
-squeeze_column(ill_df, 'N4 Ab fluo Intensity', N4_SCALING_FACTOR)
+squeeze_column(ill_df, 'H2 Ab', H2_SCALING_FACTOR)
+squeeze_column(ill_df, 'N4 Ab', N4_SCALING_FACTOR)
 
 ill_df += rnd.normal(NOISE_mu, NOISE_sigma, size=ill_df.shape)
 
@@ -88,5 +88,5 @@ healthy_df = pd.DataFrame(
     index=patient_ID_range.index[patient_ID_range == 'Healthy']
 )
 
-pd.concat((healthy_df, ill_df)).sort_index().to_csv(to_data_dir('fluo_data.tsv'), sep='\t')
+pd.concat((healthy_df, ill_df)).sort_index().to_csv(to_data_dir('ELISA_data.tsv'), sep='\t')
 patient_ID_range.to_csv(to_data_dir('patient_status.csv'))
