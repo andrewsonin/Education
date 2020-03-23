@@ -1,7 +1,7 @@
 from functools import partial
 from itertools import chain
 from os import mkdir
-from os.path import isdir, join as join_path
+from os.path import join as join_path
 from typing import Union
 
 import numpy as np
@@ -11,8 +11,10 @@ import pandas as pd
 rnd.seed(999)
 
 DATA_DIR = 'homework_data/'
-if not isdir(DATA_DIR):
+try:
     mkdir(DATA_DIR)
+except FileExistsError:
+    pass
 
 to_data_dir = partial(join_path, DATA_DIR)
 
@@ -49,7 +51,7 @@ patient_status = pd.Series(
     ),
     data=pd.Categorical(
         rnd.permutation(['Ill'] * N_ILL + ['Healthy'] * N_HEALTHY),
-        categories=('Healthy', 'Ill'),
+        categories=('Healthy', 'Ill')
     ),
     name='Status'
 )
