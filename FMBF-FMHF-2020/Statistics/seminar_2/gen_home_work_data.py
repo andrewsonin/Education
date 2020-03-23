@@ -31,7 +31,7 @@ affinity = (
     (.57, 1, .31, .75, .03),
     (.03, .05, .02, 1, .01, .1, .78)
 )
-affinity_numpy = np.fromiter(chain.from_iterable(affinity), dtype=float)
+affinity_numpy = np.fromiter(chain(*affinity), dtype=float)
 
 H_mu = 16
 H_sigma = 4
@@ -42,7 +42,7 @@ N_sigma = 21 ** 0.5
 NOISE_mu = 0
 NOISE_sigma = 0.4
 
-patient_ID_range = pd.Series(
+patient_status = pd.Series(
     index=pd.Index(
         range(1, N_HEALTHY + N_ILL + 1),
         name='Patient ID'
@@ -55,7 +55,7 @@ patient_ID_range = pd.Series(
 )
 
 colnames = tuple(
-    map(lambda ag_type: f'{ag_type} Ab', chain.from_iterable(antigen_types))
+    map(lambda ag_type: f'{ag_type} Ab', chain(*antigen_types))
 )
 
 ill_df = pd.DataFrame(
@@ -66,7 +66,7 @@ ill_df = pd.DataFrame(
         )
     ),
     columns=colnames,
-    index=patient_ID_range.index[patient_ID_range == 'Ill']
+    index=patient_status.index[patient_status == 'Ill']
 )
 
 
@@ -85,8 +85,8 @@ ill_df += rnd.normal(NOISE_mu, NOISE_sigma, size=ill_df.shape)
 healthy_df = pd.DataFrame(
     rnd.normal(NOISE_mu, NOISE_sigma, size=(N_HEALTHY, len(colnames))),
     columns=colnames,
-    index=patient_ID_range.index[patient_ID_range == 'Healthy']
+    index=patient_status.index[patient_status == 'Healthy']
 )
 
 pd.concat((healthy_df, ill_df)).sort_index().to_csv(to_data_dir('ELISA_data.tsv'), sep='\t')
-patient_ID_range.to_csv(to_data_dir('patient_status.csv'))
+patient_status.to_csv(to_data_dir('patient_status.csv'))
