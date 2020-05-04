@@ -2,6 +2,7 @@ from functools import partial
 from itertools import chain
 from os import mkdir
 from os.path import join as join_path
+from pathlib import Path
 from typing import Union
 
 import numpy as np
@@ -10,7 +11,7 @@ import pandas as pd
 
 rnd.seed(999)
 
-DATA_DIR = 'homework_data/'
+DATA_DIR = Path(__file__).parent / 'homework_data'
 try:
     mkdir(DATA_DIR)
 except FileExistsError:
@@ -56,9 +57,7 @@ patient_status = pd.Series(
     name='Status'
 )
 
-colnames = tuple(
-    map(lambda ag_type: f'{ag_type} Ab', chain(*antigen_types))
-)
+colnames = tuple(f'{ag_type} Ab' for ag_type in chain(*antigen_types))
 
 ill_df = pd.DataFrame(
     affinity_numpy * np.hstack(
@@ -72,7 +71,7 @@ ill_df = pd.DataFrame(
 )
 
 
-def squeeze_column(df: pd.DataFrame, col: str, factor: Union[int, float]) -> type(None):
+def squeeze_column(df: pd.DataFrame, col: str, factor: Union[int, float]) -> None:
     df[col] += (df[col].mean() - df[col]) * factor
 
 
