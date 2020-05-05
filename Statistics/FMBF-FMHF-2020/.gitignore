@@ -1,6 +1,5 @@
 *.key
 *.html
 *.web.zip
-*.ipynb_checkpoints
 class_data
 homework_data
